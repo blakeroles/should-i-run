@@ -14,14 +14,14 @@ class Body extends StatelessWidget {
           child: SingleChildScrollView(
             child: Column(children: [
               SizedBox(height: SizeConfig.screenHeight * 0.04),
-              Text("Welcome Back",
+              Text("Should I Run?",
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: getProportionateScreenWidth(28.0),
                     fontWeight: FontWeight.bold,
                   )),
               Text(
-                "Sign in with your email and password \nor continue with social media",
+                "Enter your location to display score",
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: SizeConfig.screenHeight * 0.08),
