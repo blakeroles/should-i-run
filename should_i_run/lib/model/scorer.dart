@@ -9,15 +9,15 @@ class Scorer {
     score = -1;
   }
 
-  double calc_temp_between_minus_one_and_twelve(double te) {
+  double calcTempBetweenMinusOneAndTwelve(double te) {
     return (100.0 / 13.0) * (te + 1.0);
   }
 
-  double calc_temp_between_twelve_and_thirty_five(double te) {
+  double calcTempBetweenTwelveAndThirtyFive(double te) {
     return (-100.0 / 23.0) * (te - 35);
   }
 
-  double calc_humidity(double hu) {
+  double calcHumidity(double hu) {
     return ((-80.0 / 100.0) * hu) + 100.0;
   }
 
@@ -25,10 +25,12 @@ class Scorer {
     if (temp <= -1.0) {
       return 0.0;
     } else if (temp > -1.0 && temp <= 12.0) {
-      return calc_temp_between_minus_one_and_twelve(temp);
+      return calcTempBetweenMinusOneAndTwelve(temp);
     } else if (temp > 12.0 && temp < 35.0) {
-      return calc_temp_between_twelve_and_thirty_five(temp);
+      return calcTempBetweenTwelveAndThirtyFive(temp);
     } else if (temp >= 35.0) {
+      return 0.0;
+    } else {
       return 0.0;
     }
   }
@@ -41,6 +43,8 @@ class Scorer {
     } else if (precip > 4.0 && precip <= 8.0) {
       return 25.0;
     } else if (precip > 8.0) {
+      return 0.0;
+    } else {
       return 0.0;
     }
   }
@@ -77,6 +81,11 @@ class Scorer {
           return 0.0;
         }
         break;
+      default:
+        {
+          return 0.0;
+        }
+        break;
     }
   }
 
@@ -84,9 +93,24 @@ class Scorer {
     if (hum < 0.0) {
       return 100.0;
     } else if (hum >= 0.0 && hum <= 100.0) {
-      return calc_humidity(hum);
+      return calcHumidity(hum);
     } else if (hum > 100.0) {
       return 20.0;
+    } else {
+      return 0.0;
+    }
+  }
+
+  void calcScore() {
+    double ts = calcTempScore(apiHandler.tempResult);
+    double ps = calcPrecipScore(apiHandler.precipResult);
+    double ais = calcAirQualityScore(apiHandler.airQualityResult);
+    double hs = calcHumidityScore(apiHandler.humidityResult);
+
+    if (ts == 0.0 || ps == 0.0 || ais == 0.0 || hs == 0.0) {
+      score = 0;
+    } else {
+      score = ((1.0 / 4.0) * (ts + ps + ais + hs)).toInt();
     }
   }
 }

@@ -39,6 +39,7 @@ class _LocationFormState extends State<LocationForm> {
               press: () {
                 if (_formKey.currentState.validate()) {
                   _formKey.currentState.save();
+                  print("Pressed Button!");
                 }
               })
         ]));
