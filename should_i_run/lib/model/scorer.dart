@@ -4,9 +4,9 @@ class Scorer {
   ApiHandler apiHandler;
   int score;
 
-  void init(ApiHandler apih) {
-    apiHandler = apih;
-    score = -1;
+  Scorer(ApiHandler apih) {
+    this.apiHandler = apih;
+    this.score = -1;
   }
 
   double calcTempBetweenMinusOneAndTwelve(double te) {
@@ -112,5 +112,9 @@ class Scorer {
     } else {
       score = ((1.0 / 4.0) * (ts + ps + ais + hs)).toInt();
     }
+  }
+
+  int getScore() {
+    return score;
   }
 }

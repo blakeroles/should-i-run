@@ -4,6 +4,8 @@ import 'package:should_i_run/components/custom_suffix_item.dart';
 import 'package:should_i_run/size_config.dart';
 import 'package:should_i_run/components/form_error.dart';
 import 'package:should_i_run/components/default_button.dart';
+import 'package:should_i_run/model/api_handler.dart';
+import 'package:should_i_run/model/scorer.dart';
 
 class LocationForm extends StatefulWidget {
   @override
@@ -39,7 +41,10 @@ class _LocationFormState extends State<LocationForm> {
               press: () {
                 if (_formKey.currentState.validate()) {
                   _formKey.currentState.save();
-                  print("Pressed Button!");
+                  ApiHandler apihandler = new ApiHandler();
+                  Scorer scorer = new Scorer(apihandler);
+                  scorer.calcScore();
+                  print(scorer.getScore());
                 }
               })
         ]));

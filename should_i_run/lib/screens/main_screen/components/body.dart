@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:should_i_run/constants.dart';
 import 'package:should_i_run/size_config.dart';
 import 'package:should_i_run/screens/main_screen/components/location_form.dart';
 
