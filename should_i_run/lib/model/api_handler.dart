@@ -1,3 +1,5 @@
+import 'package:http/http.dart' as http;
+
 class ApiHandler {
   double tempResult;
   double precipResult;
@@ -9,5 +11,9 @@ class ApiHandler {
     this.precipResult = 2.0;
     this.airQualityResult = 2;
     this.humidityResult = 20.0;
+  }
+
+  Future<http.Response> fetchWeatherData() {
+    return http.get(Uri.parse('https://jsonplaceholder.typicode.com/albums/1'));
   }
 }
