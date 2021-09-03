@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:should_i_run/constants.dart';
 import 'package:should_i_run/components/custom_suffix_item.dart';
+import 'package:should_i_run/size_config.dart';
+import 'package:should_i_run/components/form_error.dart';
+import 'package:should_i_run/components/default_button.dart';
 
 class LocationForm extends StatefulWidget {
   @override
@@ -10,6 +13,7 @@ class LocationForm extends StatefulWidget {
 class _LocationFormState extends State<LocationForm> {
   final _formKey = GlobalKey<FormState>();
   String location;
+  bool remember = false;
   final List<String> errors = [];
   @override
   Widget build(BuildContext context) {
@@ -17,6 +21,26 @@ class _LocationFormState extends State<LocationForm> {
         key: _formKey,
         child: Column(children: [
           buildLocationFormField(),
+          Row(children: [
+            Checkbox(
+                value: remember,
+                activeColor: kPrimaryColor,
+                onChanged: (value) {
+                  setState(() {
+                    remember = value;
+                  });
+                }),
+            Text("Remember location"),
+          ]),
+          SizedBox(height: getProportionateScreenHeight(20)),
+          FormError(errors: errors),
+          DefaultButton(
+              text: "Submit",
+              press: () {
+                if (_formKey.currentState.validate()) {
+                  _formKey.currentState.save();
+                }
+              })
         ]));
   }
 
