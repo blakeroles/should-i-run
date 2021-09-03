@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:should_i_run/constants.dart';
 import 'package:should_i_run/size_config.dart';
+import 'package:should_i_run/screens/main_screen/components/location_form.dart';
 
 class Body extends StatelessWidget {
   @override
@@ -25,6 +26,7 @@ class Body extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: SizeConfig.screenHeight * 0.08),
+              LocationForm(),
               SizedBox(height: SizeConfig.screenHeight * 0.08),
               SizedBox(height: getProportionateScreenHeight(20.0)),
             ]),
