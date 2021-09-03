@@ -22,3 +22,5 @@ final headingStyle = TextStyle(
 
 // From error
 const String kLocationNullError = "Please Enter your location";
+
+// Scorer constants
