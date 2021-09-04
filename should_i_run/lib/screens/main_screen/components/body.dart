@@ -20,6 +20,7 @@ class Body extends StatelessWidget {
                     fontSize: getProportionateScreenWidth(28.0),
                     fontWeight: FontWeight.bold,
                   )),
+              SizedBox(height: getProportionateScreenHeight(10.0)),
               Text(
                 "Enter your location to display score",
                 textAlign: TextAlign.center,

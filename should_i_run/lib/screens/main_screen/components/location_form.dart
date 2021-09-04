@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:should_i_run/constants.dart';
 import 'package:should_i_run/components/custom_suffix_item.dart';
 import 'package:should_i_run/size_config.dart';
@@ -7,7 +8,6 @@ import 'package:should_i_run/components/default_button.dart';
 import 'package:should_i_run/model/weather_response.dart';
 import 'package:should_i_run/model/api_handler.dart';
 import 'package:should_i_run/model/scorer.dart';
-import 'package:http/http.dart' as http;
 
 class LocationForm extends StatefulWidget {
   @override
@@ -16,17 +16,42 @@ class LocationForm extends StatefulWidget {
 
 class _LocationFormState extends State<LocationForm> {
   final _formKey = GlobalKey<FormState>();
+  final locationFormFieldController = TextEditingController();
   String location;
+  String initialLocation;
   bool remember = false;
   final List<String> errors = [];
   final Map<int, String> airQualityMap = {
     1: 'Good',
     2: 'Moderate',
     3: 'Unhealthy for Sensitive People',
-    4: 'Very Unhealthy',
-    5: 'Hazardous'
+    4: 'Unhealthy',
+    5: 'Very Unhealthy',
+    6: 'Hazardous'
   };
   Future<WeatherResponse> weatherResponse;
+
+  @override
+  void initState() {
+    super.initState();
+    loadInitialLocation();
+  }
+
+  void loadInitialLocation() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      locationFormFieldController.text =
+          (prefs.getString('initialLocation') ?? '');
+      print(initialLocation);
+    });
+  }
+
+  void saveInitialLocation() async {
+    print('got here');
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('initialLocation', location);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -47,14 +72,16 @@ class _LocationFormState extends State<LocationForm> {
           SizedBox(height: getProportionateScreenHeight(20)),
           FormError(errors: errors),
           DefaultButton(
-              text: "Submit",
+              text: "Calculate Score",
               press: () {
                 if (_formKey.currentState.validate()) {
                   _formKey.currentState.save();
                   WeatherApiHandler weatherApihandler =
                       new WeatherApiHandler(location);
                   weatherResponse = weatherApihandler.fetchWeatherData();
-
+                  if (remember) {
+                    saveInitialLocation();
+                  }
                   setState(() {});
                 }
               }),
@@ -68,7 +95,7 @@ class _LocationFormState extends State<LocationForm> {
                   return Text(scorer.getScore().toString(),
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: getProportionateScreenWidth(64.0),
+                        fontSize: getProportionateScreenWidth(92.0),
                         fontWeight: FontWeight.bold,
                       ));
                 } else if (snapshot.hasError) {
@@ -76,6 +103,8 @@ class _LocationFormState extends State<LocationForm> {
                 }
                 return Text('');
               }),
+          SizedBox(height: getProportionateScreenHeight(40)),
+          buildLocationFutureBuilder(),
           SizedBox(height: getProportionateScreenHeight(20)),
           buildTempFutureBuilder('Current Temperature: ', '\u2103'),
           SizedBox(height: getProportionateScreenHeight(20)),
@@ -87,6 +116,30 @@ class _LocationFormState extends State<LocationForm> {
         ]));
   }
 
+  FutureBuilder<WeatherResponse> buildLocationFutureBuilder() {
+    return FutureBuilder<WeatherResponse>(
+        future: weatherResponse,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Text(
+                'Location is ' +
+                    snapshot.data.name +
+                    ', ' +
+                    snapshot.data.region +
+                    ', ' +
+                    snapshot.data.country,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: getProportionateScreenWidth(14.0),
+                  fontWeight: FontWeight.bold,
+                ));
+          } else if (snapshot.hasError) {
+            return Text('${snapshot.error}');
+          }
+          return Text('');
+        });
+  }
+
   FutureBuilder<WeatherResponse> buildTempFutureBuilder(
       String factor, String unit) {
     return FutureBuilder<WeatherResponse>(
@@ -96,8 +149,7 @@ class _LocationFormState extends State<LocationForm> {
             return Text(factor + snapshot.data.tempResult.toString() + unit,
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: getProportionateScreenWidth(16.0),
-                  fontWeight: FontWeight.bold,
+                  fontSize: getProportionateScreenWidth(12.0),
                 ));
           } else if (snapshot.hasError) {
             return Text('${snapshot.error}');
@@ -115,8 +167,7 @@ class _LocationFormState extends State<LocationForm> {
             return Text(factor + snapshot.data.precipResult.toString() + unit,
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: getProportionateScreenWidth(16.0),
-                  fontWeight: FontWeight.bold,
+                  fontSize: getProportionateScreenWidth(12.0),
                 ));
           } else if (snapshot.hasError) {
             return Text('${snapshot.error}');
@@ -134,8 +185,7 @@ class _LocationFormState extends State<LocationForm> {
             return Text(factor + snapshot.data.humidityResult.toString() + unit,
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: getProportionateScreenWidth(16.0),
-                  fontWeight: FontWeight.bold,
+                  fontSize: getProportionateScreenWidth(12.0),
                 ));
           } else if (snapshot.hasError) {
             return Text('${snapshot.error}');
@@ -154,8 +204,7 @@ class _LocationFormState extends State<LocationForm> {
                 factor + airQualityMap[snapshot.data.airQualityResult] + unit,
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: getProportionateScreenWidth(16.0),
-                  fontWeight: FontWeight.bold,
+                  fontSize: getProportionateScreenWidth(12.0),
                 ));
           } else if (snapshot.hasError) {
             return Text('${snapshot.error}');
@@ -166,6 +215,7 @@ class _LocationFormState extends State<LocationForm> {
 
   TextFormField buildLocationFormField() {
     return TextFormField(
+        controller: locationFormFieldController,
         keyboardType: TextInputType.text,
         onSaved: (newValue) => location = newValue,
         onChanged: (value) {
