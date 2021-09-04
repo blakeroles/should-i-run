@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:should_i_run/theme.dart';
 import 'package:should_i_run/screens/main_screen/main_screen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
 
-void main() {
+Future main() async {
+  await DotEnv.load(fileName: "app.env");
   runApp(MyApp());
 }
 

@@ -1,11 +1,11 @@
-import 'package:should_i_run/model/api_handler.dart';
+import 'package:should_i_run/model/weather_response.dart';
 
 class Scorer {
-  ApiHandler apiHandler;
+  WeatherResponse weatherResponse;
   int score;
 
-  Scorer(ApiHandler apih) {
-    this.apiHandler = apih;
+  Scorer(WeatherResponse wr) {
+    this.weatherResponse = wr;
     this.score = -1;
   }
 
@@ -102,10 +102,10 @@ class Scorer {
   }
 
   void calcScore() {
-    double ts = calcTempScore(apiHandler.tempResult);
-    double ps = calcPrecipScore(apiHandler.precipResult);
-    double ais = calcAirQualityScore(apiHandler.airQualityResult);
-    double hs = calcHumidityScore(apiHandler.humidityResult);
+    double ts = calcTempScore(weatherResponse.tempResult);
+    double ps = calcPrecipScore(weatherResponse.precipResult);
+    double ais = calcAirQualityScore(weatherResponse.airQualityResult);
+    double hs = calcHumidityScore(weatherResponse.humidityResult);
 
     if (ts == 0.0 || ps == 0.0 || ais == 0.0 || hs == 0.0) {
       score = 0;

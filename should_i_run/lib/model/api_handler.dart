@@ -1,19 +1,30 @@
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:should_i_run/model/weather_response.dart';
 
-class ApiHandler {
-  double tempResult;
-  double precipResult;
-  int airQualityResult;
-  double humidityResult;
+class WeatherApiHandler {
+  final String urlString1 = 'http://api.weatherapi.com/v1/current.json?key=';
+  final String urlString2 = '&q=';
+  final String urlString3 = '&aqi=yes';
+  final String apiKey = env['WEATHER_API_KEY'];
+  String location;
 
-  ApiHandler() {
-    this.tempResult = 5.0;
-    this.precipResult = 2.0;
-    this.airQualityResult = 2;
-    this.humidityResult = 20.0;
+  WeatherApiHandler(String loc) {
+    this.location = loc;
   }
 
-  Future<http.Response> fetchWeatherData() {
-    return http.get(Uri.parse('https://jsonplaceholder.typicode.com/albums/1'));
+  Future<WeatherResponse> fetchWeatherData() async {
+    String httpString =
+        urlString1 + apiKey + urlString2 + location + urlString3;
+
+    final response = await http.get(Uri.parse(httpString));
+
+    if (response.statusCode == 200) {
+      return WeatherResponse.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load weather information');
+    }
   }
 }

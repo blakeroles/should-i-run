@@ -4,8 +4,10 @@ import 'package:should_i_run/components/custom_suffix_item.dart';
 import 'package:should_i_run/size_config.dart';
 import 'package:should_i_run/components/form_error.dart';
 import 'package:should_i_run/components/default_button.dart';
+import 'package:should_i_run/model/weather_response.dart';
 import 'package:should_i_run/model/api_handler.dart';
 import 'package:should_i_run/model/scorer.dart';
+import 'package:http/http.dart' as http;
 
 class LocationForm extends StatefulWidget {
   @override
@@ -17,6 +19,7 @@ class _LocationFormState extends State<LocationForm> {
   String location;
   bool remember = false;
   final List<String> errors = [];
+  Future<WeatherResponse> weatherResponse;
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -41,11 +44,30 @@ class _LocationFormState extends State<LocationForm> {
               press: () {
                 if (_formKey.currentState.validate()) {
                   _formKey.currentState.save();
-                  ApiHandler apihandler = new ApiHandler();
-                  Scorer scorer = new Scorer(apihandler);
-                  scorer.calcScore();
-                  print(scorer.getScore());
+                  WeatherApiHandler weatherApihandler =
+                      new WeatherApiHandler('Delhi');
+                  weatherResponse = weatherApihandler.fetchWeatherData();
+
+                  setState(() {});
+                  //WeatherResponse weatherResponse = new WeatherResponse();
+                  //Scorer scorer = new Scorer(weatherResponse);
+                  //scorer.calcScore();
+                  //print(scorer.getScore());
+
                 }
+              }),
+          FutureBuilder<WeatherResponse>(
+              future: weatherResponse,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  print(snapshot.data.humidityResult);
+                  Scorer scorer = new Scorer(snapshot.data);
+                  scorer.calcScore();
+                  return Text(scorer.getScore().toString());
+                } else if (snapshot.hasError) {
+                  return Text('${snapshot.error}');
+                }
+                return Text('Score');
               })
         ]));
   }
