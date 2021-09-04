@@ -58,7 +58,7 @@ class _LocationFormState extends State<LocationForm> {
                   setState(() {});
                 }
               }),
-          SizedBox(height: getProportionateScreenHeight(20)),
+          SizedBox(height: getProportionateScreenHeight(60)),
           FutureBuilder<WeatherResponse>(
               future: weatherResponse,
               builder: (context, snapshot) {
@@ -68,13 +68,13 @@ class _LocationFormState extends State<LocationForm> {
                   return Text(scorer.getScore().toString(),
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: getProportionateScreenWidth(28.0),
+                        fontSize: getProportionateScreenWidth(64.0),
                         fontWeight: FontWeight.bold,
                       ));
                 } else if (snapshot.hasError) {
                   return Text('${snapshot.error}');
                 }
-                return Text('Score');
+                return Text('');
               }),
           SizedBox(height: getProportionateScreenHeight(20)),
           buildTempFutureBuilder('Current Temperature: ', '\u2103'),
@@ -102,7 +102,7 @@ class _LocationFormState extends State<LocationForm> {
           } else if (snapshot.hasError) {
             return Text('${snapshot.error}');
           }
-          return Text('Score');
+          return Text('');
         });
   }
 
@@ -121,7 +121,7 @@ class _LocationFormState extends State<LocationForm> {
           } else if (snapshot.hasError) {
             return Text('${snapshot.error}');
           }
-          return Text('Score');
+          return Text('');
         });
   }
 
@@ -140,7 +140,7 @@ class _LocationFormState extends State<LocationForm> {
           } else if (snapshot.hasError) {
             return Text('${snapshot.error}');
           }
-          return Text('Score');
+          return Text('');
         });
   }
 
@@ -160,7 +160,7 @@ class _LocationFormState extends State<LocationForm> {
           } else if (snapshot.hasError) {
             return Text('${snapshot.error}');
           }
-          return Text('Score');
+          return Text('');
         });
   }
 
