@@ -19,6 +19,13 @@ class _LocationFormState extends State<LocationForm> {
   String location;
   bool remember = false;
   final List<String> errors = [];
+  final Map<int, String> airQualityMap = {
+    1: 'Good',
+    2: 'Moderate',
+    3: 'Unhealthy for Sensitive People',
+    4: 'Very Unhealthy',
+    5: 'Hazardous'
+  };
   Future<WeatherResponse> weatherResponse;
   @override
   Widget build(BuildContext context) {
@@ -45,31 +52,116 @@ class _LocationFormState extends State<LocationForm> {
                 if (_formKey.currentState.validate()) {
                   _formKey.currentState.save();
                   WeatherApiHandler weatherApihandler =
-                      new WeatherApiHandler('Delhi');
+                      new WeatherApiHandler(location);
                   weatherResponse = weatherApihandler.fetchWeatherData();
 
                   setState(() {});
-                  //WeatherResponse weatherResponse = new WeatherResponse();
-                  //Scorer scorer = new Scorer(weatherResponse);
-                  //scorer.calcScore();
-                  //print(scorer.getScore());
-
                 }
               }),
+          SizedBox(height: getProportionateScreenHeight(20)),
           FutureBuilder<WeatherResponse>(
               future: weatherResponse,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  print(snapshot.data.humidityResult);
                   Scorer scorer = new Scorer(snapshot.data);
                   scorer.calcScore();
-                  return Text(scorer.getScore().toString());
+                  return Text(scorer.getScore().toString(),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: getProportionateScreenWidth(28.0),
+                        fontWeight: FontWeight.bold,
+                      ));
                 } else if (snapshot.hasError) {
                   return Text('${snapshot.error}');
                 }
                 return Text('Score');
-              })
+              }),
+          SizedBox(height: getProportionateScreenHeight(20)),
+          buildTempFutureBuilder('Current Temperature: ', '\u2103'),
+          SizedBox(height: getProportionateScreenHeight(20)),
+          buildPrecipFutureBuilder('Current Precipitation: ', 'mm'),
+          SizedBox(height: getProportionateScreenHeight(20)),
+          buildHumidityFutureBuilder('Current Humidity: ', '%'),
+          SizedBox(height: getProportionateScreenHeight(20)),
+          buildAirQualityFutureBuilder('Current Air Quality: ', '')
         ]));
+  }
+
+  FutureBuilder<WeatherResponse> buildTempFutureBuilder(
+      String factor, String unit) {
+    return FutureBuilder<WeatherResponse>(
+        future: weatherResponse,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Text(factor + snapshot.data.tempResult.toString() + unit,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: getProportionateScreenWidth(16.0),
+                  fontWeight: FontWeight.bold,
+                ));
+          } else if (snapshot.hasError) {
+            return Text('${snapshot.error}');
+          }
+          return Text('Score');
+        });
+  }
+
+  FutureBuilder<WeatherResponse> buildPrecipFutureBuilder(
+      String factor, String unit) {
+    return FutureBuilder<WeatherResponse>(
+        future: weatherResponse,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Text(factor + snapshot.data.precipResult.toString() + unit,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: getProportionateScreenWidth(16.0),
+                  fontWeight: FontWeight.bold,
+                ));
+          } else if (snapshot.hasError) {
+            return Text('${snapshot.error}');
+          }
+          return Text('Score');
+        });
+  }
+
+  FutureBuilder<WeatherResponse> buildHumidityFutureBuilder(
+      String factor, String unit) {
+    return FutureBuilder<WeatherResponse>(
+        future: weatherResponse,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Text(factor + snapshot.data.humidityResult.toString() + unit,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: getProportionateScreenWidth(16.0),
+                  fontWeight: FontWeight.bold,
+                ));
+          } else if (snapshot.hasError) {
+            return Text('${snapshot.error}');
+          }
+          return Text('Score');
+        });
+  }
+
+  FutureBuilder<WeatherResponse> buildAirQualityFutureBuilder(
+      String factor, String unit) {
+    return FutureBuilder<WeatherResponse>(
+        future: weatherResponse,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Text(
+                factor + airQualityMap[snapshot.data.airQualityResult] + unit,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: getProportionateScreenWidth(16.0),
+                  fontWeight: FontWeight.bold,
+                ));
+          } else if (snapshot.hasError) {
+            return Text('${snapshot.error}');
+          }
+          return Text('Score');
+        });
   }
 
   TextFormField buildLocationFormField() {
