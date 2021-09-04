@@ -42,12 +42,10 @@ class _LocationFormState extends State<LocationForm> {
     setState(() {
       locationFormFieldController.text =
           (prefs.getString('initialLocation') ?? '');
-      print(initialLocation);
     });
   }
 
   void saveInitialLocation() async {
-    print('got here');
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('initialLocation', location);
   }
