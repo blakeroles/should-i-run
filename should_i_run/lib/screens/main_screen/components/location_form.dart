@@ -80,6 +80,7 @@ class _LocationFormState extends State<LocationForm> {
                   if (remember) {
                     saveInitialLocation();
                   }
+                  FocusScope.of(context).requestFocus(new FocusNode());
                   setState(() {});
                 }
               }),
@@ -90,18 +91,29 @@ class _LocationFormState extends State<LocationForm> {
                 if (snapshot.hasData) {
                   Scorer scorer = new Scorer(snapshot.data);
                   scorer.calcScore();
-                  return Text(scorer.getScore().toString(),
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: getProportionateScreenWidth(92.0),
-                        fontWeight: FontWeight.bold,
-                      ));
+                  return Row(
+                    children: [
+                      Spacer(),
+                      Text(scorer.getScore().toString(),
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: getProportionateScreenWidth(92.0),
+                            fontWeight: FontWeight.bold,
+                          )),
+                      Text('/100',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: getProportionateScreenWidth(20.0),
+                              fontWeight: FontWeight.bold)),
+                      Spacer(),
+                    ],
+                  );
                 } else if (snapshot.hasError) {
                   return Text('${snapshot.error}');
                 }
                 return Text('');
               }),
-          SizedBox(height: getProportionateScreenHeight(40)),
+          SizedBox(height: getProportionateScreenHeight(30)),
           buildLocationFutureBuilder(),
           SizedBox(height: getProportionateScreenHeight(20)),
           buildTempFutureBuilder('Current Temperature: ', '\u2103'),
@@ -132,7 +144,7 @@ class _LocationFormState extends State<LocationForm> {
                   fontWeight: FontWeight.bold,
                 ));
           } else if (snapshot.hasError) {
-            return Text('${snapshot.error}');
+            return Text('');
           }
           return Text('');
         });
@@ -150,7 +162,7 @@ class _LocationFormState extends State<LocationForm> {
                   fontSize: getProportionateScreenWidth(12.0),
                 ));
           } else if (snapshot.hasError) {
-            return Text('${snapshot.error}');
+            return Text('');
           }
           return Text('');
         });
@@ -168,7 +180,7 @@ class _LocationFormState extends State<LocationForm> {
                   fontSize: getProportionateScreenWidth(12.0),
                 ));
           } else if (snapshot.hasError) {
-            return Text('${snapshot.error}');
+            return Text('');
           }
           return Text('');
         });
@@ -186,7 +198,7 @@ class _LocationFormState extends State<LocationForm> {
                   fontSize: getProportionateScreenWidth(12.0),
                 ));
           } else if (snapshot.hasError) {
-            return Text('${snapshot.error}');
+            return Text('');
           }
           return Text('');
         });
@@ -205,7 +217,7 @@ class _LocationFormState extends State<LocationForm> {
                   fontSize: getProportionateScreenWidth(12.0),
                 ));
           } else if (snapshot.hasError) {
-            return Text('${snapshot.error}');
+            return Text('');
           }
           return Text('');
         });

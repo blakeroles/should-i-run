@@ -9,6 +9,7 @@
 .history
 .svn/
 *.env
+/assets/icons/*
 
 # IntelliJ related
 *.iml
