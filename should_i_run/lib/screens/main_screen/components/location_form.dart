@@ -95,7 +95,7 @@ class _LocationFormState extends State<LocationForm> {
                   setState(() {});
                 }
               }),
-          SizedBox(height: getProportionateScreenHeight(60)),
+          SizedBox(height: getProportionateScreenHeight(40)),
           FutureBuilder<WeatherResponse>(
               future: weatherResponse,
               builder: (context, snapshot) {
@@ -124,7 +124,21 @@ class _LocationFormState extends State<LocationForm> {
                 }
                 return Text('');
               }),
-          SizedBox(height: getProportionateScreenHeight(30)),
+          Row(
+            children: [
+              Spacer(),
+              Text('Show Forecast',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: getProportionateScreenWidth(18.0),
+                    fontWeight: FontWeight.bold,
+                  )),
+              SizedBox(width: getProportionateScreenWidth(5)),
+              CustomSuffixIcon(
+                svgIcon: "assets/icons/arrow_right.svg",
+              )
+            ],
+          ),
           buildLocationFutureBuilder(),
           SizedBox(height: getProportionateScreenHeight(20)),
           buildTempFutureBuilder('Current Temperature: ', '\u2103'),
