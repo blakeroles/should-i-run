@@ -19,7 +19,8 @@ class _LocationFormState extends State<LocationForm> {
   final locationFormFieldController = TextEditingController();
   String location;
   String initialLocation;
-  bool remember = false;
+  bool rememberLocation = false;
+  bool calculateForecast = false;
   final List<String> errors = [];
   final Map<int, String> airQualityMap = {
     1: 'Good',
@@ -58,14 +59,24 @@ class _LocationFormState extends State<LocationForm> {
           buildLocationFormField(),
           Row(children: [
             Checkbox(
-                value: remember,
+                value: rememberLocation,
                 activeColor: kPrimaryColor,
                 onChanged: (value) {
                   setState(() {
-                    remember = value;
+                    rememberLocation = value;
                   });
                 }),
             Text("Remember location"),
+            Spacer(),
+            Checkbox(
+                value: calculateForecast,
+                activeColor: kPrimaryColor,
+                onChanged: (value) {
+                  setState(() {
+                    calculateForecast = value;
+                  });
+                }),
+            Text("Calculate Forecast"),
           ]),
           SizedBox(height: getProportionateScreenHeight(20)),
           FormError(errors: errors),
@@ -77,7 +88,7 @@ class _LocationFormState extends State<LocationForm> {
                   WeatherApiHandler weatherApihandler =
                       new WeatherApiHandler(location);
                   weatherResponse = weatherApihandler.fetchWeatherData();
-                  if (remember) {
+                  if (rememberLocation) {
                     saveInitialLocation();
                   }
                   FocusScope.of(context).requestFocus(new FocusNode());
