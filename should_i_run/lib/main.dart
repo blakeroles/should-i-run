@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:should_i_run/theme.dart';
 import 'package:should_i_run/screens/main_screen/main_screen.dart';
+import 'package:should_i_run/theme.dart';
+import 'package:should_i_run/routes.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
 
 Future main() async {
@@ -16,7 +17,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Should I Run?',
       theme: theme(),
-      home: MainScreen(),
+      initialRoute: MainScreen.routeName,
+      routes: routes,
     );
   }
 }
