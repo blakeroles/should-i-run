@@ -8,6 +8,7 @@ import 'package:should_i_run/components/default_button.dart';
 import 'package:should_i_run/model/weather_response.dart';
 import 'package:should_i_run/model/api_handler.dart';
 import 'package:should_i_run/model/scorer.dart';
+import 'package:should_i_run/components/tappable_custom_suffix_item.dart';
 
 class LocationForm extends StatefulWidget {
   @override
@@ -21,6 +22,7 @@ class _LocationFormState extends State<LocationForm> {
   String initialLocation;
   bool rememberLocation = false;
   bool calculateForecast = false;
+  bool forecastCalculated = false;
   final List<String> errors = [];
   final Map<int, String> airQualityMap = {
     1: 'Good',
@@ -116,7 +118,20 @@ class _LocationFormState extends State<LocationForm> {
                               color: Colors.black,
                               fontSize: getProportionateScreenWidth(20.0),
                               fontWeight: FontWeight.bold)),
-                      Spacer(),
+                      Visibility(
+                        visible: calculateForecast,
+                        child: SizedBox(width: getProportionateScreenWidth(51)),
+                      ),
+                      Visibility(
+                        visible: !calculateForecast,
+                        child: Spacer(),
+                      ),
+                      Visibility(
+                        visible: calculateForecast,
+                        child: TappableCustomSuffixIcon(
+                          svgIcon: "assets/icons/arrow_right.svg",
+                        ),
+                      ),
                     ],
                   );
                 } else if (snapshot.hasError) {
@@ -124,21 +139,7 @@ class _LocationFormState extends State<LocationForm> {
                 }
                 return Text('');
               }),
-          Row(
-            children: [
-              Spacer(),
-              Text('Show Forecast',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: getProportionateScreenWidth(18.0),
-                    fontWeight: FontWeight.bold,
-                  )),
-              SizedBox(width: getProportionateScreenWidth(5)),
-              CustomSuffixIcon(
-                svgIcon: "assets/icons/arrow_right.svg",
-              )
-            ],
-          ),
+          SizedBox(height: getProportionateScreenHeight(20)),
           buildLocationFutureBuilder(),
           SizedBox(height: getProportionateScreenHeight(20)),
           buildTempFutureBuilder('Current Temperature: ', '\u2103'),
