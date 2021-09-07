@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:should_i_run/constants.dart';
 import 'package:should_i_run/components/custom_suffix_item.dart';
+import 'package:should_i_run/screens/forecast_screen/forecast_screen.dart';
 import 'package:should_i_run/size_config.dart';
 import 'package:should_i_run/components/form_error.dart';
 import 'package:should_i_run/components/default_button.dart';
@@ -130,6 +131,7 @@ class _LocationFormState extends State<LocationForm> {
                         visible: calculateForecast,
                         child: TappableCustomSuffixIcon(
                           svgIcon: "assets/icons/arrow_right.svg",
+                          screenRoute: ForecastScreen.routeName,
                         ),
                       ),
                     ],

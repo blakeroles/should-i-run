@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:should_i_run/size_config.dart';
-import 'package:should_i_run/screens/forecast_screen/forecast_screen.dart';
 
 class TappableCustomSuffixIcon extends StatelessWidget {
   const TappableCustomSuffixIcon({
     Key key,
     this.svgIcon,
+    this.screenRoute,
   }) : super(key: key);
 
   final String svgIcon;
+  final String screenRoute;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.popAndPushNamed(context, ForecastScreen.routeName),
+      onTap: () => Navigator.popAndPushNamed(context, screenRoute),
       child: Padding(
         padding: EdgeInsets.fromLTRB(
           0,
