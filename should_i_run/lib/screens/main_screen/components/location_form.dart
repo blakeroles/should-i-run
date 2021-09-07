@@ -21,7 +21,6 @@ class _LocationFormState extends State<LocationForm> {
   String initialLocation;
   bool rememberLocation = false;
   bool calculateForecast = false;
-  bool forecastCalculated = false;
   final List<String> errors = [];
   final Map<int, String> airQualityMap = {
     1: 'Good',
