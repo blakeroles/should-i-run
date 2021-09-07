@@ -153,6 +153,10 @@ class _LocationFormState extends State<LocationForm> {
           Visibility(
               visible: !calculateForecast,
               child: buildAirQualityFutureBuilder('Current Air Quality: ', '')),
+          Visibility(
+            visible: calculateForecast,
+            child: buildTestFutureBuilder(),
+          ),
         ]));
   }
 
@@ -223,6 +227,23 @@ class _LocationFormState extends State<LocationForm> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return Text(factor + snapshot.data.humidityResult.toString() + unit,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: getProportionateScreenWidth(12.0),
+                ));
+          } else if (snapshot.hasError) {
+            return Text('');
+          }
+          return Text('');
+        });
+  }
+
+  FutureBuilder<WeatherResponse> buildTestFutureBuilder() {
+    return FutureBuilder<WeatherResponse>(
+        future: weatherResponse,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Text(snapshot.data.dayOneHourData[23]['temp_c'].toString(),
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: getProportionateScreenWidth(12.0),
