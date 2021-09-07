@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:should_i_run/constants.dart';
 import 'package:should_i_run/components/custom_suffix_item.dart';
-import 'package:should_i_run/screens/forecast_screen/forecast_screen.dart';
 import 'package:should_i_run/size_config.dart';
 import 'package:should_i_run/components/form_error.dart';
 import 'package:should_i_run/components/default_button.dart';
 import 'package:should_i_run/model/weather_response.dart';
 import 'package:should_i_run/model/api_handler.dart';
 import 'package:should_i_run/model/scorer.dart';
-import 'package:should_i_run/components/tappable_custom_suffix_item.dart';
 
 class LocationForm extends StatefulWidget {
   @override
@@ -88,14 +86,7 @@ class _LocationFormState extends State<LocationForm> {
               press: () {
                 if (_formKey.currentState.validate()) {
                   _formKey.currentState.save();
-                  WeatherApiHandler weatherApihandler =
-                      new WeatherApiHandler(location);
-                  weatherResponse = weatherApihandler.fetchWeatherData();
-                  if (rememberLocation) {
-                    saveInitialLocation();
-                  }
-                  FocusScope.of(context).requestFocus(new FocusNode());
-                  setState(() {});
+                  processApi(location);
                 }
               }),
           SizedBox(height: getProportionateScreenHeight(40)),
@@ -119,21 +110,7 @@ class _LocationFormState extends State<LocationForm> {
                               color: Colors.black,
                               fontSize: getProportionateScreenWidth(20.0),
                               fontWeight: FontWeight.bold)),
-                      Visibility(
-                        visible: calculateForecast,
-                        child: SizedBox(width: getProportionateScreenWidth(51)),
-                      ),
-                      Visibility(
-                        visible: !calculateForecast,
-                        child: Spacer(),
-                      ),
-                      Visibility(
-                        visible: calculateForecast,
-                        child: TappableCustomSuffixIcon(
-                          svgIcon: "assets/icons/arrow_right.svg",
-                          screenRoute: ForecastScreen.routeName,
-                        ),
-                      ),
+                      Spacer(),
                     ],
                   );
                 } else if (snapshot.hasError) {
@@ -142,15 +119,41 @@ class _LocationFormState extends State<LocationForm> {
                 return Text('');
               }),
           SizedBox(height: getProportionateScreenHeight(20)),
-          buildLocationFutureBuilder(),
-          SizedBox(height: getProportionateScreenHeight(20)),
-          buildTempFutureBuilder('Current Temperature: ', '\u2103'),
-          SizedBox(height: getProportionateScreenHeight(20)),
-          buildPrecipFutureBuilder('Current Precipitation: ', 'mm'),
-          SizedBox(height: getProportionateScreenHeight(20)),
-          buildHumidityFutureBuilder('Current Humidity: ', '%'),
-          SizedBox(height: getProportionateScreenHeight(20)),
-          buildAirQualityFutureBuilder('Current Air Quality: ', '')
+          Visibility(
+            visible: !calculateForecast,
+            child: buildLocationFutureBuilder(),
+          ),
+          Visibility(
+            visible: !calculateForecast,
+            child: SizedBox(height: getProportionateScreenHeight(20)),
+          ),
+          Visibility(
+            visible: !calculateForecast,
+            child: buildTempFutureBuilder('Current Temperature: ', '\u2103'),
+          ),
+          Visibility(
+            visible: !calculateForecast,
+            child: SizedBox(height: getProportionateScreenHeight(20)),
+          ),
+          Visibility(
+            visible: !calculateForecast,
+            child: buildPrecipFutureBuilder('Current Precipitation: ', 'mm'),
+          ),
+          Visibility(
+            visible: !calculateForecast,
+            child: SizedBox(height: getProportionateScreenHeight(20)),
+          ),
+          Visibility(
+            visible: !calculateForecast,
+            child: buildHumidityFutureBuilder('Current Humidity: ', '%'),
+          ),
+          Visibility(
+            visible: !calculateForecast,
+            child: SizedBox(height: getProportionateScreenHeight(20)),
+          ),
+          Visibility(
+              visible: !calculateForecast,
+              child: buildAirQualityFutureBuilder('Current Air Quality: ', '')),
         ]));
   }
 
@@ -281,5 +284,15 @@ class _LocationFormState extends State<LocationForm> {
             svgIcon: "assets/icons/Location point.svg",
           ),
         ));
+  }
+
+  void processApi(String loc) {
+    WeatherApiHandler weatherApihandler = new WeatherApiHandler(loc);
+    weatherResponse = weatherApihandler.fetchWeatherData();
+    if (rememberLocation) {
+      saveInitialLocation();
+    }
+    FocusScope.of(context).requestFocus(new FocusNode());
+    setState(() {});
   }
 }

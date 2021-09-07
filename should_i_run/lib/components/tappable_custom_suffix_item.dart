@@ -7,15 +7,18 @@ class TappableCustomSuffixIcon extends StatelessWidget {
     Key key,
     this.svgIcon,
     this.screenRoute,
+    this.location,
   }) : super(key: key);
 
   final String svgIcon;
   final String screenRoute;
+  final String location;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.popAndPushNamed(context, screenRoute),
+      onTap: () =>
+          Navigator.popAndPushNamed(context, screenRoute, arguments: location),
       child: Padding(
         padding: EdgeInsets.fromLTRB(
           0,
