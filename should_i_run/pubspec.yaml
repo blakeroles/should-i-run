@@ -24,6 +24,7 @@ dependencies:
   flutter:
     sdk: flutter
   shared_preferences: ^0.5.10
+  draw_graph: ^0.0.2
 
 
 

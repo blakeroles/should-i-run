@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:should_i_run/constants.dart';
 import 'package:should_i_run/components/custom_suffix_item.dart';
@@ -8,6 +9,8 @@ import 'package:should_i_run/components/default_button.dart';
 import 'package:should_i_run/model/weather_response.dart';
 import 'package:should_i_run/model/api_handler.dart';
 import 'package:should_i_run/model/scorer.dart';
+import 'package:draw_graph/draw_graph.dart';
+import 'package:draw_graph/models/feature.dart';
 
 class LocationForm extends StatefulWidget {
   @override
@@ -31,6 +34,13 @@ class _LocationFormState extends State<LocationForm> {
     6: 'Hazardous'
   };
   Future<WeatherResponse> weatherResponse;
+  final List<Feature> features = [
+    Feature(
+      title: "Temperature",
+      color: kPrimaryColor,
+      data: [0.3, 0.6, 0.8, 0.9, 1, 1.2],
+    ),
+  ];
 
   @override
   void initState() {
@@ -157,6 +167,23 @@ class _LocationFormState extends State<LocationForm> {
             visible: calculateForecast,
             child: buildTestFutureBuilder(),
           ),
+          Visibility(
+              visible: calculateForecast,
+              child: LineGraph(
+                features: features,
+                size: Size(500, 200),
+                labelX: [
+                  'Day 1',
+                  'Day 2',
+                  'Day 3',
+                  'Day 4',
+                  'Day 5',
+                  'Day 6',
+                ],
+                labelY: ['25%', '45%', '65%', '75%', '85%', '100%'],
+                showDescription: true,
+                graphColor: Colors.black87,
+              ))
         ]));
   }
 
