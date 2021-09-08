@@ -282,6 +282,26 @@ class _LocationFormState extends State<LocationForm> {
         });
   }
 
+  FutureBuilder<WeatherResponse> buildScoreGraphFutureBuilder() {
+    return FutureBuilder<WeatherResponse>(
+        future: weatherResponse,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            Map scoreHourMap = Map<int, String>();
+            scoreHourMap = createScoreHourMapFromWeatherResponse(snapshot);
+            return Text('Testing');
+          } else if (snapshot.hasError) {
+            return Text('');
+          }
+          return Text('');
+        });
+  }
+
+  Map<int, String> createScoreHourMapFromWeatherResponse(
+      AsyncSnapshot<WeatherResponse> snap) {
+    return Map<int, String>();
+  }
+
   FutureBuilder<WeatherResponse> buildAirQualityFutureBuilder(
       String factor, String unit) {
     return FutureBuilder<WeatherResponse>(
