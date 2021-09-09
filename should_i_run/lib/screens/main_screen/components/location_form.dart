@@ -11,6 +11,7 @@ import 'package:should_i_run/model/api_handler.dart';
 import 'package:should_i_run/model/scorer.dart';
 import 'package:draw_graph/draw_graph.dart';
 import 'package:draw_graph/models/feature.dart';
+import 'package:should_i_run/model/forecast_scorer.dart';
 
 class LocationForm extends StatefulWidget {
   @override
@@ -34,13 +35,6 @@ class _LocationFormState extends State<LocationForm> {
     6: 'Hazardous'
   };
   Future<WeatherResponse> weatherResponse;
-  final List<Feature> features = [
-    Feature(
-      title: "Temperature",
-      color: kPrimaryColor,
-      data: [0.3, 0.6, 0.8, 0.9, 1, 1.2],
-    ),
-  ];
 
   @override
   void initState() {
@@ -165,25 +159,8 @@ class _LocationFormState extends State<LocationForm> {
               child: buildAirQualityFutureBuilder('Current Air Quality: ', '')),
           Visibility(
             visible: calculateForecast,
-            child: buildTestFutureBuilder(),
+            child: buildScoreGraphFutureBuilder(),
           ),
-          Visibility(
-              visible: calculateForecast,
-              child: LineGraph(
-                features: features,
-                size: Size(500, 200),
-                labelX: [
-                  'Day 1',
-                  'Day 2',
-                  'Day 3',
-                  'Day 4',
-                  'Day 5',
-                  'Day 6',
-                ],
-                labelY: ['25%', '45%', '65%', '75%', '85%', '100%'],
-                showDescription: true,
-                graphColor: Colors.black87,
-              ))
         ]));
   }
 
@@ -287,9 +264,24 @@ class _LocationFormState extends State<LocationForm> {
         future: weatherResponse,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            Map scoreHourMap = Map<int, String>();
-            scoreHourMap = createScoreHourMapFromWeatherResponse(snapshot);
-            return Text('Testing');
+            Map scoreHourMap = createScoreHourMapFromWeatherResponse(snapshot);
+            List<String> hours = scoreHourMap.keys.toList();
+            List<double> scores = scoreHourMap.values.toList();
+            print(hours);
+            print(scores);
+            return LineGraph(
+              features: [
+                Feature(
+                  title: "Scores",
+                  color: kPrimaryColor,
+                  data: scores,
+                )
+              ],
+              size: Size(600, 200),
+              labelX: hours,
+              labelY: ['25', '50', '75', '100'],
+              graphColor: Colors.black87,
+            );
           } else if (snapshot.hasError) {
             return Text('');
           }
@@ -297,9 +289,38 @@ class _LocationFormState extends State<LocationForm> {
         });
   }
 
-  Map<int, String> createScoreHourMapFromWeatherResponse(
+  Map<String, double> createScoreHourMapFromWeatherResponse(
       AsyncSnapshot<WeatherResponse> snap) {
-    return Map<int, String>();
+    Map scoreHourMap = Map<String, double>();
+
+    if (snap.hasData) {
+      for (var i = 0; i < 24; i++) {
+        double temp = snap.data.dayOneHourData[i]['temp_c'];
+        double precip = snap.data.dayOneHourData[i]['precip_mm'];
+        int airqu = snap.data.airQualityResult;
+        int humid = snap.data.dayOneHourData[i]['humidity'];
+        ForecastScorer fcScorer =
+            new ForecastScorer(temp, precip, airqu, humid.toDouble());
+        fcScorer.calcScore();
+        print(fcScorer.getScore());
+        scoreHourMap[i.toString()] = fcScorer.getScore().toDouble() / 100.0;
+      }
+      for (var i = 0; i < 24; i++) {
+        double temp = snap.data.dayTwoHourData[i]['temp_c'];
+        double precip = snap.data.dayTwoHourData[i]['precip_mm'];
+        int airqu = snap.data.airQualityResult;
+        int humid = snap.data.dayTwoHourData[i]['humidity'];
+        ForecastScorer fcScorer =
+            new ForecastScorer(temp, precip, airqu, humid.toDouble());
+        fcScorer.calcScore();
+        print(fcScorer.getScore());
+        scoreHourMap[(i + 24).toString()] =
+            fcScorer.getScore().toDouble() / 100.0;
+      }
+    } else if (snap.hasError) {
+      return null;
+    }
+    return scoreHourMap;
   }
 
   FutureBuilder<WeatherResponse> buildAirQualityFutureBuilder(
