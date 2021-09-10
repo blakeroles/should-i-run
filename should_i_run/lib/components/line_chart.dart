@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:should_i_run/constants.dart';
 import 'package:should_i_run/model/weather_response.dart';
 import 'package:should_i_run/model/forecast_scorer.dart';
+import 'dart:math';
 
 // This class has been adapted from line_chart_sample5.dart
 // located within the fl_chart Github repository.

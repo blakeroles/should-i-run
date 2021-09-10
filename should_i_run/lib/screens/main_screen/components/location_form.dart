@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:should_i_run/constants.dart';
 import 'package:should_i_run/components/custom_suffix_item.dart';
@@ -9,9 +8,6 @@ import 'package:should_i_run/components/default_button.dart';
 import 'package:should_i_run/model/weather_response.dart';
 import 'package:should_i_run/model/api_handler.dart';
 import 'package:should_i_run/model/scorer.dart';
-import 'package:draw_graph/draw_graph.dart';
-import 'package:draw_graph/models/feature.dart';
-import 'package:should_i_run/model/forecast_scorer.dart';
 import 'package:should_i_run/components/line_chart.dart';
 
 class LocationForm extends StatefulWidget {
@@ -123,14 +119,8 @@ class _LocationFormState extends State<LocationForm> {
                 return Text('');
               }),
           SizedBox(height: getProportionateScreenHeight(20)),
-          Visibility(
-            visible: !calculateForecast,
-            child: buildLocationFutureBuilder(),
-          ),
-          Visibility(
-            visible: !calculateForecast,
-            child: SizedBox(height: getProportionateScreenHeight(20)),
-          ),
+          buildLocationFutureBuilder(),
+          SizedBox(height: getProportionateScreenHeight(20)),
           Visibility(
             visible: !calculateForecast,
             child: buildLocalTimeFutureBuilder('Current Time: ', ''),
@@ -258,23 +248,6 @@ class _LocationFormState extends State<LocationForm> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return Text(factor + snapshot.data.humidityResult.toString() + unit,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: getProportionateScreenWidth(12.0),
-                ));
-          } else if (snapshot.hasError) {
-            return Text('');
-          }
-          return Text('');
-        });
-  }
-
-  FutureBuilder<WeatherResponse> buildTestFutureBuilder() {
-    return FutureBuilder<WeatherResponse>(
-        future: weatherResponse,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return Text(snapshot.data.dayOneHourData[23]['temp_c'].toString(),
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: getProportionateScreenWidth(12.0),
