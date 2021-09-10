@@ -89,7 +89,7 @@ class _LocationFormState extends State<LocationForm> {
                   processApi(location);
                 }
               }),
-          SizedBox(height: getProportionateScreenHeight(40)),
+          SizedBox(height: getProportionateScreenHeight(10)),
           FutureBuilder<WeatherResponse>(
               future: weatherResponse,
               builder: (context, snapshot) {
