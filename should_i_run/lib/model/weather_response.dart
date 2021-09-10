@@ -6,6 +6,7 @@ class WeatherResponse {
   final String name;
   final String region;
   final String country;
+  final String localTime;
   final List<dynamic> dayOneHourData;
   final List<dynamic> dayTwoHourData;
 
@@ -17,6 +18,7 @@ class WeatherResponse {
       this.name,
       this.region,
       this.country,
+      this.localTime,
       this.dayOneHourData,
       this.dayTwoHourData});
 
@@ -29,6 +31,7 @@ class WeatherResponse {
       name: json['location']['name'],
       region: json['location']['region'],
       country: json['location']['country'],
+      localTime: json['location']['localtime'],
       dayOneHourData: json['forecast']['forecastday'][0]['hour'],
       dayTwoHourData: json['forecast']['forecastday'][1]['hour'],
     );

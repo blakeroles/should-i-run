@@ -80,7 +80,7 @@ class _LocationFormState extends State<LocationForm> {
                     calculateForecast = value;
                   });
                 }),
-            Text("Calculate Forecast"),
+            Text("Show Forecast"),
           ]),
           SizedBox(height: getProportionateScreenHeight(20)),
           FormError(errors: errors),
@@ -125,6 +125,14 @@ class _LocationFormState extends State<LocationForm> {
           Visibility(
             visible: !calculateForecast,
             child: buildLocationFutureBuilder(),
+          ),
+          Visibility(
+            visible: !calculateForecast,
+            child: SizedBox(height: getProportionateScreenHeight(20)),
+          ),
+          Visibility(
+            visible: !calculateForecast,
+            child: buildLocalTimeFutureBuilder('Current Time: ', ''),
           ),
           Visibility(
             visible: !calculateForecast,
@@ -180,6 +188,24 @@ class _LocationFormState extends State<LocationForm> {
                   color: Colors.black,
                   fontSize: getProportionateScreenWidth(14.0),
                   fontWeight: FontWeight.bold,
+                ));
+          } else if (snapshot.hasError) {
+            return Text('');
+          }
+          return Text('');
+        });
+  }
+
+  FutureBuilder<WeatherResponse> buildLocalTimeFutureBuilder(
+      String factor, String unit) {
+    return FutureBuilder<WeatherResponse>(
+        future: weatherResponse,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Text(factor + snapshot.data.localTime.split(' ')[1] + unit,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: getProportionateScreenWidth(12.0),
                 ));
           } else if (snapshot.hasError) {
             return Text('');
@@ -264,11 +290,16 @@ class _LocationFormState extends State<LocationForm> {
         future: weatherResponse,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
+            String localHour = getHourFromLocalTime(snapshot.data.localTime);
             Map scoreHourMap = createScoreHourMapFromWeatherResponse(snapshot);
+            for (String h in scoreHourMap.keys.toList()) {
+              if (int.parse(h) < int.parse(localHour) ||
+                  int.parse(h) > (int.parse(localHour) + 24)) {
+                scoreHourMap.removeWhere((key, value) => key == h);
+              }
+            }
             List<String> hours = scoreHourMap.keys.toList();
             List<double> scores = scoreHourMap.values.toList();
-            print(hours);
-            print(scores);
             return LineGraph(
               features: [
                 Feature(
@@ -302,7 +333,6 @@ class _LocationFormState extends State<LocationForm> {
         ForecastScorer fcScorer =
             new ForecastScorer(temp, precip, airqu, humid.toDouble());
         fcScorer.calcScore();
-        print(fcScorer.getScore());
         scoreHourMap[i.toString()] = fcScorer.getScore().toDouble() / 100.0;
       }
       for (var i = 0; i < 24; i++) {
@@ -313,7 +343,6 @@ class _LocationFormState extends State<LocationForm> {
         ForecastScorer fcScorer =
             new ForecastScorer(temp, precip, airqu, humid.toDouble());
         fcScorer.calcScore();
-        print(fcScorer.getScore());
         scoreHourMap[(i + 24).toString()] =
             fcScorer.getScore().toDouble() / 100.0;
       }
@@ -382,5 +411,10 @@ class _LocationFormState extends State<LocationForm> {
     }
     FocusScope.of(context).requestFocus(new FocusNode());
     setState(() {});
+  }
+
+  String getHourFromLocalTime(String localTime) {
+    String hour = localTime.split(' ')[1].split(':')[0];
+    return hour;
   }
 }
