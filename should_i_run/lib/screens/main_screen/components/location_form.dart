@@ -12,6 +12,7 @@ import 'package:should_i_run/model/scorer.dart';
 import 'package:draw_graph/draw_graph.dart';
 import 'package:draw_graph/models/feature.dart';
 import 'package:should_i_run/model/forecast_scorer.dart';
+import 'package:should_i_run/components/line_chart.dart';
 
 class LocationForm extends StatefulWidget {
   @override
@@ -300,6 +301,29 @@ class _LocationFormState extends State<LocationForm> {
             }
             List<String> hours = scoreHourMap.keys.toList();
             List<double> scores = scoreHourMap.values.toList();
+            return ForecastChart();
+          } else if (snapshot.hasError) {
+            return Text('');
+          }
+          return Text('');
+        });
+  }
+
+/* FutureBuilder<WeatherResponse> buildScoreGraphFutureBuilder() {
+    return FutureBuilder<WeatherResponse>(
+        future: weatherResponse,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            String localHour = getHourFromLocalTime(snapshot.data.localTime);
+            Map scoreHourMap = createScoreHourMapFromWeatherResponse(snapshot);
+            for (String h in scoreHourMap.keys.toList()) {
+              if (int.parse(h) < int.parse(localHour) ||
+                  int.parse(h) > (int.parse(localHour) + 24)) {
+                scoreHourMap.removeWhere((key, value) => key == h);
+              }
+            }
+            List<String> hours = scoreHourMap.keys.toList();
+            List<double> scores = scoreHourMap.values.toList();
             return LineGraph(
               features: [
                 Feature(
@@ -318,7 +342,7 @@ class _LocationFormState extends State<LocationForm> {
           }
           return Text('');
         });
-  }
+  } */
 
   Map<String, double> createScoreHourMapFromWeatherResponse(
       AsyncSnapshot<WeatherResponse> snap) {
