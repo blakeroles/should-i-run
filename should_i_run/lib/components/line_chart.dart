@@ -1,27 +1,27 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:should_i_run/constants.dart';
+import 'package:should_i_run/model/weather_response.dart';
+import 'package:should_i_run/model/forecast_scorer.dart';
 
 // This class has been adapted from line_chart_sample5.dart
 // located within the fl_chart Github repository.
 
+// ignore: must_be_immutable
 class ForecastChart extends StatelessWidget {
-  final List<int> showIndexes = const [1, 3, 5];
-  final List<FlSpot> allSpots = [
-    FlSpot(0, 1),
-    FlSpot(1, 2),
-    FlSpot(2, 1.5),
-    FlSpot(3, 3),
-    FlSpot(4, 3.5),
-    FlSpot(5, 5),
-    FlSpot(6, 8),
-  ];
+  //final List<int> showIndexes = const [1, 3, 5];
+  List<FlSpot> allSpots = [];
+  Future<WeatherResponse> weatherResponse;
+
+  ForecastChart(Future<WeatherResponse> wR) {
+    this.weatherResponse = wR;
+  }
 
   @override
   Widget build(BuildContext context) {
     final lineBarsData = [
       LineChartBarData(
-        showingIndicators: showIndexes,
+        //showingIndicators: showIndexes,
         spots: allSpots,
         isCurved: false,
         barWidth: 2,
@@ -49,105 +49,252 @@ class ForecastChart extends StatelessWidget {
 
     //final tooltipsOnBar = lineBarsData[0];
 
-    return SizedBox(
-      width: 300,
-      height: 200,
-      child: LineChart(
-        LineChartData(
-          //showingTooltipIndicators: showIndexes.map((index) {
-          //  return ShowingTooltipIndicators([
-          //    LineBarSpot(tooltipsOnBar, lineBarsData.indexOf(tooltipsOnBar),
-          //        tooltipsOnBar.spots[index]),
-          //  ]);
-          //}).toList(),
-          lineTouchData: LineTouchData(
-            enabled: true,
-            getTouchedSpotIndicator:
-                (LineChartBarData barData, List<int> spotIndexes) {
-              return spotIndexes.map((index) {
-                return TouchedSpotIndicatorData(
-                  FlLine(
-                    color: kPrimaryColor,
-                  ),
-                  FlDotData(
-                    show: false,
-                    getDotPainter: (spot, percent, barData, index) =>
-                        FlDotCirclePainter(
-                      radius: 8,
-                      color: lerpGradient(
-                          barData.colors, barData.colorStops, percent / 100),
-                      strokeWidth: 2,
-                      strokeColor: Colors.black,
+    return FutureBuilder<WeatherResponse>(
+        future: weatherResponse,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            String localHour = getHourFromLocalTime(snapshot.data.localTime);
+            Map scoreHourMap = createScoreHourMapFromWeatherResponse(snapshot);
+            for (int h in scoreHourMap.keys.toList()) {
+              if (h < int.parse(localHour) || h > (int.parse(localHour) + 24)) {
+                scoreHourMap.removeWhere((key, value) => key == h);
+              }
+            }
+            for (int h in scoreHourMap.keys.toList()) {
+              allSpots.add(FlSpot(h.toDouble(), scoreHourMap[h]));
+            }
+            return SizedBox(
+              width: 300,
+              height: 200,
+              child: LineChart(
+                LineChartData(
+                  //showingTooltipIndicators: showIndexes.map((index) {
+                  //  return ShowingTooltipIndicators([
+                  //    LineBarSpot(tooltipsOnBar, lineBarsData.indexOf(tooltipsOnBar),
+                  //        tooltipsOnBar.spots[index]),
+                  //  ]);
+                  //}).toList(),
+                  lineTouchData: LineTouchData(
+                    enabled: true,
+                    getTouchedSpotIndicator:
+                        (LineChartBarData barData, List<int> spotIndexes) {
+                      return spotIndexes.map((index) {
+                        return TouchedSpotIndicatorData(
+                          FlLine(
+                            color: kPrimaryColor,
+                          ),
+                          FlDotData(
+                            show: false,
+                            getDotPainter: (spot, percent, barData, index) =>
+                                FlDotCirclePainter(
+                              radius: 8,
+                              color: lerpGradient(barData.colors,
+                                  barData.colorStops, percent / 100),
+                              strokeWidth: 2,
+                              strokeColor: Colors.black,
+                            ),
+                          ),
+                        );
+                      }).toList();
+                    },
+                    touchTooltipData: LineTouchTooltipData(
+                      tooltipBgColor: kPrimaryColor,
+                      tooltipRoundedRadius: 4,
+                      getTooltipItems: (List<LineBarSpot> lineBarsSpot) {
+                        return lineBarsSpot.map((lineBarSpot) {
+                          return LineTooltipItem(
+                            lineBarSpot.y.toString(),
+                            const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          );
+                        }).toList();
+                      },
                     ),
                   ),
-                );
-              }).toList();
-            },
-            touchTooltipData: LineTouchTooltipData(
-              tooltipBgColor: kPrimaryColor,
-              tooltipRoundedRadius: 4,
-              getTooltipItems: (List<LineBarSpot> lineBarsSpot) {
-                return lineBarsSpot.map((lineBarSpot) {
-                  return LineTooltipItem(
-                    lineBarSpot.y.toString(),
-                    const TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
-                  );
-                }).toList();
-              },
-            ),
-          ),
-          lineBarsData: lineBarsData,
-          minY: 0,
-          titlesData: FlTitlesData(
-            leftTitles: SideTitles(
-              showTitles: false,
-            ),
-            bottomTitles: SideTitles(
-                showTitles: true,
-                getTitles: (val) {
-                  switch (val.toInt()) {
-                    case 0:
-                      return '00:00';
-                    case 1:
-                      return '04:00';
-                    case 2:
-                      return '08:00';
-                    case 3:
-                      return '12:00';
-                    case 4:
-                      return '16:00';
-                    case 5:
-                      return '20:00';
-                    case 6:
-                      return '23:59';
-                  }
-                  return '';
-                },
-                getTextStyles: (context, value) => const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blueGrey,
-                      fontFamily: 'Digital',
-                      fontSize: 12,
-                    )),
-            rightTitles: SideTitles(showTitles: false),
-            topTitles: SideTitles(showTitles: false),
-          ),
-          axisTitleData: FlAxisTitleData(
-            //rightTitle: AxisTitle(showTitle: true, titleText: 'count'),
-            leftTitle: AxisTitle(showTitle: true, titleText: 'Score'),
-            topTitle: AxisTitle(
-                showTitle: true,
-                titleText: 'Forecasted scores over next 24hrs',
-                textAlign: TextAlign.center),
-          ),
-          gridData: FlGridData(show: false),
-          borderData: FlBorderData(
-            show: true,
-          ),
-        ),
-      ),
-    );
+                  lineBarsData: lineBarsData,
+                  minY: 0,
+                  maxY: 100,
+                  titlesData: FlTitlesData(
+                    leftTitles: SideTitles(
+                        showTitles: true,
+                        getTextStyles: (context, value) => const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blueGrey,
+                              fontSize: 10,
+                            )),
+                    bottomTitles: SideTitles(
+                        showTitles: true,
+                        getTitles: (val) {
+                          switch (val.toInt()) {
+                            case 0:
+                              return '00:00';
+                            case 1:
+                              return '01:00';
+                            case 2:
+                              return '02:00';
+                            case 3:
+                              return '03:00';
+                            case 4:
+                              return '04:00';
+                            case 5:
+                              return '05:00';
+                            case 6:
+                              return '06:00';
+                            case 7:
+                              return '07:00';
+                            case 8:
+                              return '08:00';
+                            case 9:
+                              return '09:00';
+                            case 10:
+                              return '10:00';
+                            case 11:
+                              return '11:00';
+                            case 12:
+                              return '12:00';
+                            case 13:
+                              return '13:00';
+                            case 14:
+                              return '14:00';
+                            case 15:
+                              return '15:00';
+                            case 16:
+                              return '16:00';
+                            case 17:
+                              return '17:00';
+                            case 18:
+                              return '18:00';
+                            case 19:
+                              return '19:00';
+                            case 20:
+                              return '20:00';
+                            case 21:
+                              return '21:00';
+                            case 22:
+                              return '22:00';
+                            case 23:
+                              return '23:00';
+                            case 24:
+                              return '24:00';
+                            case 25:
+                              return '00:00';
+                            case 26:
+                              return '01:00';
+                            case 27:
+                              return '02:00';
+                            case 28:
+                              return '03:00';
+                            case 29:
+                              return '04:00';
+                            case 30:
+                              return '05:00';
+                            case 31:
+                              return '06:00';
+                            case 32:
+                              return '07:00';
+                            case 33:
+                              return '08:00';
+                            case 34:
+                              return '09:00';
+                            case 35:
+                              return '10:00';
+                            case 36:
+                              return '11:00';
+                            case 37:
+                              return '12:00';
+                            case 38:
+                              return '13:00';
+                            case 39:
+                              return '14:00';
+                            case 40:
+                              return '15:00';
+                            case 41:
+                              return '16:00';
+                            case 42:
+                              return '17:00';
+                            case 43:
+                              return '18:00';
+                            case 44:
+                              return '19:00';
+                            case 45:
+                              return '20:00';
+                            case 46:
+                              return '21:00';
+                            case 47:
+                              return '22:00';
+                            case 48:
+                              return '23:00';
+                            case 49:
+                              return '24:00';
+                          }
+                          return '';
+                        },
+                        getTextStyles: (context, value) => const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blueGrey,
+                              fontFamily: 'Digital',
+                              fontSize: 10,
+                            )),
+                    rightTitles: SideTitles(showTitles: false),
+                    topTitles: SideTitles(showTitles: false),
+                  ),
+                  axisTitleData: FlAxisTitleData(
+                    //rightTitle: AxisTitle(showTitle: true, titleText: 'count'),
+                    //leftTitle: AxisTitle(showTitle: true, titleText: 'Score'),
+                    topTitle: AxisTitle(
+                        showTitle: true,
+                        titleText: 'Forecasted scores over next 24hrs',
+                        textAlign: TextAlign.center),
+                  ),
+                  gridData: FlGridData(show: false),
+                  borderData: FlBorderData(
+                    show: true,
+                  ),
+                ),
+              ),
+            );
+          } else if (snapshot.hasError) {
+            return Text('');
+          }
+          return Text('');
+        });
+  }
+
+  String getHourFromLocalTime(String localTime) {
+    String hour = localTime.split(' ')[1].split(':')[0];
+    return hour;
+  }
+
+  Map<int, double> createScoreHourMapFromWeatherResponse(
+      AsyncSnapshot<WeatherResponse> snap) {
+    Map scoreHourMap = Map<int, double>();
+
+    if (snap.hasData) {
+      for (var i = 0; i < 24; i++) {
+        double temp = snap.data.dayOneHourData[i]['temp_c'];
+        double precip = snap.data.dayOneHourData[i]['precip_mm'];
+        int airqu = snap.data.airQualityResult;
+        int humid = snap.data.dayOneHourData[i]['humidity'];
+        ForecastScorer fcScorer =
+            new ForecastScorer(temp, precip, airqu, humid.toDouble());
+        fcScorer.calcScore();
+        scoreHourMap[i] = fcScorer.getScore().toDouble();
+      }
+      for (var i = 0; i < 24; i++) {
+        double temp = snap.data.dayTwoHourData[i]['temp_c'];
+        double precip = snap.data.dayTwoHourData[i]['precip_mm'];
+        int airqu = snap.data.airQualityResult;
+        int humid = snap.data.dayTwoHourData[i]['humidity'];
+        ForecastScorer fcScorer =
+            new ForecastScorer(temp, precip, airqu, humid.toDouble());
+        fcScorer.calcScore();
+        scoreHourMap[(i + 24)] = fcScorer.getScore().toDouble();
+      }
+    } else if (snap.hasError) {
+      return null;
+    }
+    return scoreHourMap;
   }
 }
 
