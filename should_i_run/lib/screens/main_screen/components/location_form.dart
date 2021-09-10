@@ -291,15 +291,6 @@ class _LocationFormState extends State<LocationForm> {
         future: weatherResponse,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            //String localHour = getHourFromLocalTime(snapshot.data.localTime);
-            //Map scoreHourMap = createScoreHourMapFromWeatherResponse(snapshot);
-            //for (int h in scoreHourMap.keys.toList()) {
-            //  if (h < int.parse(localHour) || h > (int.parse(localHour) + 24)) {
-            //    scoreHourMap.removeWhere((key, value) => key == h);
-            //  }
-            //}
-            //List<String> hours = scoreHourMap.keys.toList();
-            //List<double> scores = scoreHourMap.values.toList();
             return ForecastChart(weatherResponse);
           } else if (snapshot.hasError) {
             return Text('');
@@ -307,72 +298,6 @@ class _LocationFormState extends State<LocationForm> {
           return Text('');
         });
   }
-
-/* FutureBuilder<WeatherResponse> buildScoreGraphFutureBuilder() {
-    return FutureBuilder<WeatherResponse>(
-        future: weatherResponse,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            String localHour = getHourFromLocalTime(snapshot.data.localTime);
-            Map scoreHourMap = createScoreHourMapFromWeatherResponse(snapshot);
-            for (String h in scoreHourMap.keys.toList()) {
-              if (int.parse(h) < int.parse(localHour) ||
-                  int.parse(h) > (int.parse(localHour) + 24)) {
-                scoreHourMap.removeWhere((key, value) => key == h);
-              }
-            }
-            List<String> hours = scoreHourMap.keys.toList();
-            List<double> scores = scoreHourMap.values.toList();
-            return LineGraph(
-              features: [
-                Feature(
-                  title: "Scores",
-                  color: kPrimaryColor,
-                  data: scores,
-                )
-              ],
-              size: Size(600, 200),
-              labelX: hours,
-              labelY: ['25', '50', '75', '100'],
-              graphColor: Colors.black87,
-            );
-          } else if (snapshot.hasError) {
-            return Text('');
-          }
-          return Text('');
-        });
-  } */
-
-/*   Map<int, double> createScoreHourMapFromWeatherResponse(
-      AsyncSnapshot<WeatherResponse> snap) {
-    Map scoreHourMap = Map<int, double>();
-
-    if (snap.hasData) {
-      for (var i = 0; i < 24; i++) {
-        double temp = snap.data.dayOneHourData[i]['temp_c'];
-        double precip = snap.data.dayOneHourData[i]['precip_mm'];
-        int airqu = snap.data.airQualityResult;
-        int humid = snap.data.dayOneHourData[i]['humidity'];
-        ForecastScorer fcScorer =
-            new ForecastScorer(temp, precip, airqu, humid.toDouble());
-        fcScorer.calcScore();
-        scoreHourMap[i] = fcScorer.getScore().toDouble();
-      }
-      for (var i = 0; i < 24; i++) {
-        double temp = snap.data.dayTwoHourData[i]['temp_c'];
-        double precip = snap.data.dayTwoHourData[i]['precip_mm'];
-        int airqu = snap.data.airQualityResult;
-        int humid = snap.data.dayTwoHourData[i]['humidity'];
-        ForecastScorer fcScorer =
-            new ForecastScorer(temp, precip, airqu, humid.toDouble());
-        fcScorer.calcScore();
-        scoreHourMap[(i + 24)] = fcScorer.getScore().toDouble();
-      }
-    } else if (snap.hasError) {
-      return null;
-    }
-    return scoreHourMap;
-  } */
 
   FutureBuilder<WeatherResponse> buildAirQualityFutureBuilder(
       String factor, String unit) {

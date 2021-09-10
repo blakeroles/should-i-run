@@ -24,7 +24,7 @@ class ForecastChart extends StatelessWidget {
         //showingIndicators: showIndexes,
         spots: allSpots,
         isCurved: false,
-        barWidth: 2,
+        barWidth: 4,
         //shadow: const Shadow(
         //blurRadius: 8,
         //color: Colors.black,
@@ -126,109 +126,11 @@ class ForecastChart extends StatelessWidget {
                     bottomTitles: SideTitles(
                         showTitles: true,
                         getTitles: (val) {
-                          switch (val.toInt()) {
-                            case 0:
-                              return '00:00';
-                            case 1:
-                              return '01:00';
-                            case 2:
-                              return '02:00';
-                            case 3:
-                              return '03:00';
-                            case 4:
-                              return '04:00';
-                            case 5:
-                              return '05:00';
-                            case 6:
-                              return '06:00';
-                            case 7:
-                              return '07:00';
-                            case 8:
-                              return '08:00';
-                            case 9:
-                              return '09:00';
-                            case 10:
-                              return '10:00';
-                            case 11:
-                              return '11:00';
-                            case 12:
-                              return '12:00';
-                            case 13:
-                              return '13:00';
-                            case 14:
-                              return '14:00';
-                            case 15:
-                              return '15:00';
-                            case 16:
-                              return '16:00';
-                            case 17:
-                              return '17:00';
-                            case 18:
-                              return '18:00';
-                            case 19:
-                              return '19:00';
-                            case 20:
-                              return '20:00';
-                            case 21:
-                              return '21:00';
-                            case 22:
-                              return '22:00';
-                            case 23:
-                              return '23:00';
-                            case 24:
-                              return '24:00';
-                            case 25:
-                              return '00:00';
-                            case 26:
-                              return '01:00';
-                            case 27:
-                              return '02:00';
-                            case 28:
-                              return '03:00';
-                            case 29:
-                              return '04:00';
-                            case 30:
-                              return '05:00';
-                            case 31:
-                              return '06:00';
-                            case 32:
-                              return '07:00';
-                            case 33:
-                              return '08:00';
-                            case 34:
-                              return '09:00';
-                            case 35:
-                              return '10:00';
-                            case 36:
-                              return '11:00';
-                            case 37:
-                              return '12:00';
-                            case 38:
-                              return '13:00';
-                            case 39:
-                              return '14:00';
-                            case 40:
-                              return '15:00';
-                            case 41:
-                              return '16:00';
-                            case 42:
-                              return '17:00';
-                            case 43:
-                              return '18:00';
-                            case 44:
-                              return '19:00';
-                            case 45:
-                              return '20:00';
-                            case 46:
-                              return '21:00';
-                            case 47:
-                              return '22:00';
-                            case 48:
-                              return '23:00';
-                            case 49:
-                              return '24:00';
+                          if (val.toInt() < 24) {
+                            return val.toInt().toString() + ':00';
+                          } else {
+                            return (val.toInt() - 24).toString() + ':00';
                           }
-                          return '';
                         },
                         getTextStyles: (context, value) => const TextStyle(
                               fontWeight: FontWeight.bold,
@@ -244,7 +146,7 @@ class ForecastChart extends StatelessWidget {
                     //leftTitle: AxisTitle(showTitle: true, titleText: 'Score'),
                     topTitle: AxisTitle(
                         showTitle: true,
-                        titleText: 'Forecasted scores over next 24hrs',
+                        titleText: 'Forecasted score over next 24hrs',
                         textAlign: TextAlign.center),
                   ),
                   gridData: FlGridData(show: false),
