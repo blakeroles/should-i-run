@@ -18,8 +18,11 @@ class LocationForm extends StatefulWidget {
 class _LocationFormState extends State<LocationForm> {
   final _formKey = GlobalKey<FormState>();
   final locationFormFieldController = TextEditingController();
+  final countryFormFieldController = TextEditingController();
   String location;
+  String country;
   String initialLocation;
+  String initialCountry;
   bool rememberLocation = false;
   bool calculateForecast = false;
   final List<String> errors = [];
@@ -44,12 +47,15 @@ class _LocationFormState extends State<LocationForm> {
     setState(() {
       locationFormFieldController.text =
           (prefs.getString('initialLocation') ?? '');
+      countryFormFieldController.text =
+          (prefs.getString('initialCountry') ?? '');
     });
   }
 
   void saveInitialLocation() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('initialLocation', location);
+    prefs.setString('initialCountry', country);
   }
 
   @override
@@ -58,6 +64,8 @@ class _LocationFormState extends State<LocationForm> {
         key: _formKey,
         child: Column(children: [
           buildLocationFormField(),
+          SizedBox(height: getProportionateScreenHeight(15)),
+          buildCountryFormField(),
           Row(children: [
             Checkbox(
                 value: rememberLocation,
@@ -79,14 +87,14 @@ class _LocationFormState extends State<LocationForm> {
                 }),
             Text("Show Forecast"),
           ]),
-          SizedBox(height: getProportionateScreenHeight(20)),
+          SizedBox(height: getProportionateScreenHeight(15)),
           FormError(errors: errors),
           DefaultButton(
               text: "Calculate Score",
               press: () {
                 if (_formKey.currentState.validate()) {
                   _formKey.currentState.save();
-                  processApi(location);
+                  processApi(location + "," + country);
                 }
               }),
           SizedBox(height: getProportionateScreenHeight(10)),
@@ -314,11 +322,45 @@ class _LocationFormState extends State<LocationForm> {
           return null;
         },
         decoration: InputDecoration(
-          labelText: "Location",
-          hintText: "Enter your location",
+          labelText: "Suburb",
+          hintText: "Enter your suburb",
           floatingLabelBehavior: FloatingLabelBehavior.always,
           suffixIcon: CustomSuffixIcon(
             svgIcon: "assets/icons/Location point.svg",
+            iconSize: 18,
+          ),
+        ));
+  }
+
+  TextFormField buildCountryFormField() {
+    return TextFormField(
+        controller: countryFormFieldController,
+        keyboardType: TextInputType.text,
+        onSaved: (newValue) => country = newValue,
+        onChanged: (value) {
+          if (value.isNotEmpty && errors.contains(kCountryNullError)) {
+            setState(() {
+              errors.remove(kCountryNullError);
+            });
+          }
+          return null;
+        },
+        validator: (value) {
+          if (value.isEmpty && !errors.contains(kCountryNullError)) {
+            setState(() {
+              errors.add(kCountryNullError);
+            });
+            return "";
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+          labelText: "Country",
+          hintText: "Enter your country",
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          suffixIcon: CustomSuffixIcon(
+            svgIcon: "assets/icons/Location point.svg",
+            iconSize: 18,
           ),
         ));
   }
