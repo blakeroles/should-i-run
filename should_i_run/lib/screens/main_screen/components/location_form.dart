@@ -126,7 +126,7 @@ class _LocationFormState extends State<LocationForm> {
                 }
                 return Text('');
               }),
-          SizedBox(height: getProportionateScreenHeight(20)),
+          SizedBox(height: getProportionateScreenHeight(10)),
           buildLocationFutureBuilder(),
           SizedBox(height: getProportionateScreenHeight(20)),
           Visibility(
