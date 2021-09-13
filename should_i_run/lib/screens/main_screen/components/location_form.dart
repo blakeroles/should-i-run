@@ -229,7 +229,7 @@ class _LocationFormState extends State<LocationForm> {
                   fontSize: getProportionateScreenWidth(12.0),
                 ));
           } else {
-            return CircularProgressIndicator();
+            return Text('');
           }
         });
   }
