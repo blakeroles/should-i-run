@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:should_i_run/constants.dart';
 import 'package:should_i_run/components/custom_suffix_item.dart';
+import 'package:should_i_run/model/forecast_scorer.dart';
 import 'package:should_i_run/size_config.dart';
 import 'package:should_i_run/components/form_error.dart';
 import 'package:should_i_run/components/default_button.dart';
@@ -102,7 +103,11 @@ class _LocationFormState extends State<LocationForm> {
               future: weatherResponse,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  Scorer scorer = new Scorer(snapshot.data);
+                  ForecastScorer scorer = new ForecastScorer(
+                      snapshot.data.tempResult,
+                      snapshot.data.precipResult,
+                      snapshot.data.airQualityResult,
+                      snapshot.data.humidityResult);
                   scorer.calcScore();
                   return Row(
                     children: [
