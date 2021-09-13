@@ -8,7 +8,6 @@ import 'package:should_i_run/components/form_error.dart';
 import 'package:should_i_run/components/default_button.dart';
 import 'package:should_i_run/model/weather_response.dart';
 import 'package:should_i_run/model/api_handler.dart';
-import 'package:should_i_run/model/scorer.dart';
 import 'package:should_i_run/components/line_chart.dart';
 
 class LocationForm extends StatefulWidget {
