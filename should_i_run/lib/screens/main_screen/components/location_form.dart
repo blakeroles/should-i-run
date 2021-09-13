@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:should_i_run/constants.dart';
 import 'package:should_i_run/components/custom_suffix_item.dart';
+import 'package:should_i_run/model/forecast_scorer.dart';
 import 'package:should_i_run/size_config.dart';
 import 'package:should_i_run/components/form_error.dart';
 import 'package:should_i_run/components/default_button.dart';
 import 'package:should_i_run/model/weather_response.dart';
 import 'package:should_i_run/model/api_handler.dart';
-import 'package:should_i_run/model/scorer.dart';
 import 'package:should_i_run/components/line_chart.dart';
 
 class LocationForm extends StatefulWidget {
@@ -102,7 +102,11 @@ class _LocationFormState extends State<LocationForm> {
               future: weatherResponse,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  Scorer scorer = new Scorer(snapshot.data);
+                  ForecastScorer scorer = new ForecastScorer(
+                      snapshot.data.tempResult,
+                      snapshot.data.precipResult,
+                      snapshot.data.airQualityResult,
+                      snapshot.data.humidityResult);
                   scorer.calcScore();
                   return Row(
                     children: [
@@ -224,10 +228,9 @@ class _LocationFormState extends State<LocationForm> {
                   color: Colors.black,
                   fontSize: getProportionateScreenWidth(12.0),
                 ));
-          } else if (snapshot.hasError) {
-            return Text('');
+          } else {
+            return CircularProgressIndicator();
           }
-          return Text('');
         });
   }
 

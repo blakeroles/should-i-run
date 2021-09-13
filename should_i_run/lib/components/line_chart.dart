@@ -3,14 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:should_i_run/constants.dart';
 import 'package:should_i_run/model/weather_response.dart';
 import 'package:should_i_run/model/forecast_scorer.dart';
-import 'dart:math';
 
 // This class has been adapted from line_chart_sample5.dart
 // located within the fl_chart Github repository.
 
 // ignore: must_be_immutable
 class ForecastChart extends StatelessWidget {
-  //final List<int> showIndexes = const [1, 3, 5];
   List<FlSpot> allSpots = [];
   Future<WeatherResponse> weatherResponse;
 
@@ -22,14 +20,9 @@ class ForecastChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final lineBarsData = [
       LineChartBarData(
-        //showingIndicators: showIndexes,
         spots: allSpots,
         isCurved: false,
         barWidth: 4,
-        //shadow: const Shadow(
-        //blurRadius: 8,
-        //color: Colors.black,
-        //),
         belowBarData: BarAreaData(
           show: true,
           colors: [
@@ -40,15 +33,8 @@ class ForecastChart extends StatelessWidget {
         colors: [
           kPrimaryColor,
         ],
-        //colorStops: [
-        //  0.1,
-        //  0.4,
-        //  0.9
-        //]
       ),
     ];
-
-    //final tooltipsOnBar = lineBarsData[0];
 
     return FutureBuilder<WeatherResponse>(
         future: weatherResponse,
@@ -69,12 +55,6 @@ class ForecastChart extends StatelessWidget {
               height: 200,
               child: LineChart(
                 LineChartData(
-                  //showingTooltipIndicators: showIndexes.map((index) {
-                  //  return ShowingTooltipIndicators([
-                  //    LineBarSpot(tooltipsOnBar, lineBarsData.indexOf(tooltipsOnBar),
-                  //        tooltipsOnBar.spots[index]),
-                  //  ]);
-                  //}).toList(),
                   lineTouchData: LineTouchData(
                     enabled: true,
                     getTouchedSpotIndicator:
@@ -143,8 +123,6 @@ class ForecastChart extends StatelessWidget {
                     topTitles: SideTitles(showTitles: false),
                   ),
                   axisTitleData: FlAxisTitleData(
-                    //rightTitle: AxisTitle(showTitle: true, titleText: 'count'),
-                    //leftTitle: AxisTitle(showTitle: true, titleText: 'Score'),
                     topTitle: AxisTitle(
                         showTitle: true,
                         titleText: 'Forecasted score over next 24hrs',

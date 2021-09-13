@@ -41,12 +41,12 @@ class ForecastScorer {
   }
 
   double calcPrecipScore(double precip) {
-    if (precip <= 0.5) {
+    if (precip == 0.0) {
       return 100.0;
-    } else if (precip > 0.5 && precip <= 4.0) {
-      return 70.0;
+    } else if (precip > 0.0 && precip <= 4.0) {
+      return 40.0;
     } else if (precip > 4.0 && precip <= 8.0) {
-      return 25.0;
+      return 15.0;
     } else if (precip > 8.0) {
       return 0.0;
     } else {
@@ -63,7 +63,7 @@ class ForecastScorer {
         break;
       case 2:
         {
-          return 80.0;
+          return 70.0;
         }
         break;
       case 3:
