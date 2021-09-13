@@ -6,6 +6,9 @@ class WeatherResponse {
   final String name;
   final String region;
   final String country;
+  final String localTime;
+  final List<dynamic> dayOneHourData;
+  final List<dynamic> dayTwoHourData;
 
   WeatherResponse(
       {this.tempResult,
@@ -14,7 +17,10 @@ class WeatherResponse {
       this.humidityResult,
       this.name,
       this.region,
-      this.country});
+      this.country,
+      this.localTime,
+      this.dayOneHourData,
+      this.dayTwoHourData});
 
   factory WeatherResponse.fromJson(Map<String, dynamic> json) {
     return WeatherResponse(
@@ -25,6 +31,9 @@ class WeatherResponse {
       name: json['location']['name'],
       region: json['location']['region'],
       country: json['location']['country'],
+      localTime: json['location']['localtime'],
+      dayOneHourData: json['forecast']['forecastday'][0]['hour'],
+      dayTwoHourData: json['forecast']['forecastday'][1]['hour'],
     );
   }
 }

@@ -1,5 +1,7 @@
 # should_i_run
 
+Version 2
+
 A new Flutter project.
 
 ## Getting Started
