@@ -228,10 +228,9 @@ class _LocationFormState extends State<LocationForm> {
                   color: Colors.black,
                   fontSize: getProportionateScreenWidth(12.0),
                 ));
-          } else if (snapshot.hasError) {
-            return Text('');
+          } else {
+            return CircularProgressIndicator();
           }
-          return Text('');
         });
   }
 
