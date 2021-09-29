@@ -52,7 +52,7 @@ class ForecastChart extends StatelessWidget {
             }
             return SizedBox(
               width: 300,
-              height: 200,
+              height: 180,
               child: LineChart(
                 LineChartData(
                   lineTouchData: LineTouchData(

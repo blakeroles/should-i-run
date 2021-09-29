@@ -87,7 +87,7 @@ class _LocationFormState extends State<LocationForm> {
                 }),
             Text("Show Forecast"),
           ]),
-          SizedBox(height: getProportionateScreenHeight(15)),
+          SizedBox(height: getProportionateScreenHeight(10)),
           FormError(errors: errors),
           DefaultButton(
               text: "Calculate Score",
@@ -97,7 +97,7 @@ class _LocationFormState extends State<LocationForm> {
                   processApi(location + "," + country);
                 }
               }),
-          SizedBox(height: getProportionateScreenHeight(10)),
+          SizedBox(height: getProportionateScreenHeight(5)),
           FutureBuilder<WeatherResponse>(
               future: weatherResponse,
               builder: (context, snapshot) {
@@ -130,7 +130,7 @@ class _LocationFormState extends State<LocationForm> {
                 }
                 return Text('');
               }),
-          SizedBox(height: getProportionateScreenHeight(10)),
+          SizedBox(height: getProportionateScreenHeight(5)),
           buildLocationFutureBuilder(),
           SizedBox(height: getProportionateScreenHeight(20)),
           Visibility(
